@@ -1,0 +1,69 @@
+{
+    "name": "Flask Template",
+    "id": "flask",
+    "packaging_format": 1,
+    "description": {
+        "en": "Flask app tmplate.",
+        "fr": "Modèle d'app en Flask."
+    },
+    "maintainer": {
+        "name": "alexAubin",
+        "email": "alex.aubin@mailoo.org"
+    },
+    "requirements": {
+        "yunohost": ">> 2.7.0"
+    },
+    "version": "20171209",
+    "multi_instance": "false",
+    "services": [
+        "nginx"
+    ],
+    "arguments": {
+        "install" : [
+            {
+                "name": "system_name",
+                "type": "string",
+                "example": "myapp",
+                "ask": {
+                    "en": "Short name used by the system to identify your app"
+                },
+                "help": {
+                    "en": "(only lowercases, alphanumeric characters, no spaces)"
+                }
+            },
+            {
+                "name": "display_name",
+                "type": "string",
+                "example": "My App",
+                "ask": {
+                    "en": "Display name (used in SSO portal)"
+                }
+            },
+            {
+                "name": "domain",
+                "type": "domain",
+                "example": "example.com",
+                "ask": {
+                    "en": "Choose a domain for the flask app"
+                }
+            },
+            {
+                "name": "path",
+                "type": "path",
+                "example": "/flask",
+                "default": "/flask",
+                "ask": {
+                    "en": "Choose a path for the flask app"
+                }
+            },
+            {
+                "name": "is_public",
+                "type": "boolean",
+                "default": true,
+                "ask": {
+                    "en": "Make the app public?"
+                }
+            }
+        ]
+    }
+}
