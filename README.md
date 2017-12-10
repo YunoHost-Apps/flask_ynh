@@ -15,6 +15,15 @@ Technologies
 ------------
 
 - Python 3
-- Postgresql
+- ~~Postgresql~~ (sqlite, but should be able to choose postgres vs. sqlite at install)
 - Gunicorn
 - SQLAlchemy
+
+Todo
+----
+
+- [ ] Really set app label
+- [ ] Handle public/private option
+- [ ] Be able to choose between sqlite and postgres
+- [ ] Document how to launch a dev server
+- [ ] ???
