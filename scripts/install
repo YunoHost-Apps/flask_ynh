@@ -66,8 +66,10 @@ function init_venv()
     set +o nounset 
     source venv/bin/activate
     set -o nounset 
-    pip3 install Flask
-    pip3 install gunicorn
+    pip install Flask
+    pip install Flask-Script
+    pip install Flask-SQLAlchemy
+    pip install gunicorn
     popd
 }
 
@@ -89,16 +91,26 @@ function configure_flask_app()
     cp -r ../sources/* $final_path/
 
     # App settings
-    ynh_replace_string "__YNH_DB_NAME__"     "$db_name" ../conf/settings.py
-    ynh_replace_string "__YNH_DB_USER__"     "$db_user" ../conf/settings.py
-    ynh_replace_string "__YNH_DB_PASSWORD__" "$db_pwd"  ../conf/settings.py
-    ynh_replace_string "__YNH_APP_WEBPATH__" "$path"    ../conf/settings.py
+    ynh_replace_string "__YNH_DB_NAME__"     "$db_name"    ../conf/settings.py
+    ynh_replace_string "__YNH_DB_USER__"     "$db_user"    ../conf/settings.py
+    ynh_replace_string "__YNH_DB_PASSWORD__" "$db_pwd"     ../conf/settings.py
+    ynh_replace_string "__YNH_APP_WEBPATH__" "$path"       ../conf/settings.py
+    ynh_replace_string "__YNH_APP_FSPATH__"  "$final_path" ../conf/settings.py
     cp ../conf/settings.py $final_path/app/settings_local.py
 
     # Gunicorn
     ynh_replace_string "__YNH_APP_NAME__" "$app_system_name" ../conf/gunicorn.py
     ynh_replace_string "__YNH_APP_PATH__" "$final_path"      ../conf/gunicorn.py
     cp ../conf/gunicorn.py $final_path/
+
+    # Init db
+    pushd $final_path
+    set +o nounset 
+    source venv/bin/activate
+    set -o nounset 
+    ./manage.py nuke
+    ./manage.py lorem
+    popd
 
     # Set permissions
     useradd $app_system_name -d $final_path || echo "User already exists"
