@@ -3,7 +3,7 @@
     "id": "flask",
     "packaging_format": 1,
     "description": {
-        "en": "Flask app tmplate.",
+        "en": "Flask app template.",
         "fr": "Modèle d'app en Flask."
     },
     "maintainer": {
