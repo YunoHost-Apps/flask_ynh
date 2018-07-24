@@ -11,9 +11,9 @@
         "email": "alex.aubin@mailoo.org"
     },
     "requirements": {
-        "yunohost": ">> 2.7.0"
+        "yunohost": ">> 3.0.0"
     },
-    "version": "20171209",
+    "version": "20180725",
     "multi_instance": "false",
     "services": [
         "nginx"
@@ -25,10 +25,12 @@
                 "type": "string",
                 "example": "myapp",
                 "ask": {
-                    "en": "Short name used by the system to identify your app"
+                    "en": "Short name used by the system to identify your app",
+                    "fr": "Nom court utilisé par le système pour identifier l'application"
                 },
                 "help": {
-                    "en": "(only lowercases, alphanumeric characters, no spaces)"
+                    "en": "(only lowercases, alphanumeric characters, no spaces)",
+                    "fr": "(caractères alphanumériques en minuscules seulement, pas d'espace"
                 }
             },
             {
@@ -36,7 +38,8 @@
                 "type": "string",
                 "example": "My App",
                 "ask": {
-                    "en": "Display name (used in SSO portal)"
+                    "en": "Display name (used in SSO portal)",
+                    "fr": "Nom affiché (utilisé dans le portail SSO)"
                 }
             },
             {
@@ -44,7 +47,8 @@
                 "type": "domain",
                 "example": "example.com",
                 "ask": {
-                    "en": "Choose a domain for the flask app"
+                    "en": "Choose a domain for the flask app",
+                    "fr": "Choisissez un nom de domaine pour l'application flask"
                 }
             },
             {
@@ -53,7 +57,8 @@
                 "example": "/flask",
                 "default": "/flask",
                 "ask": {
-                    "en": "Choose a path for the flask app"
+                    "en": "Choose a path for the flask app",
+                    "fr": "Choisissez un chemin pour l'application flask"
                 }
             },
             {
@@ -61,7 +66,8 @@
                 "type": "boolean",
                 "default": true,
                 "ask": {
-                    "en": "Make the app public?"
+                    "en": "Make the app public?",
+                    "fr": "Rendre l'application publique ?"
                 }
             }
         ]

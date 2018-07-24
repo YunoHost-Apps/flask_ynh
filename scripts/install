@@ -53,9 +53,10 @@ function install_dependencies()
     ynh_install_app_dependencies virtualenv \
                                  python3-dev \
                                  python3-virtualenv \
-                                 python3-pip postgresql \
-                                 postgresql-9.4 \
-                                 postgresql-server-dev-9.4
+                                 python3-pip \
+                                 postgresql \
+                                 postgresql-9.6 \
+                                 postgresql-server-dev-9.6
 }
 
 function init_venv()
