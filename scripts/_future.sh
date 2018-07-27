@@ -52,15 +52,15 @@ ynh_psql_execute_file_as_root() {
      ynh_die "ynh_psql_execute_file_as_root is not yet implemented"
 }
 
-# Create a database and grant optionnaly privilegies to a user
+# Create a database and grant optionnaly privileges to a user
 #
 # usage: ynh_psql_create_db db [user [pwd]]
 # | arg: db - the database name to create
-# | arg: user - the user to grant privilegies
+# | arg: user - the user to grant privileges
 # | arg: pwd - the password to identify user by
 ynh_psql_create_db() {
     db=$1
-    # grant all privilegies to user
+    # grant all privileges to user
     if [[ $# -gt 1 ]]; then
         ynh_psql_create_user ${2} "${3}"
         sudo su -c "createdb -O ${2} $db" -  postgres
@@ -125,3 +125,39 @@ ynh_psql_test_if_first_run() {
 	fi
 }
 
+
+#=================================================
+# SQLITE HELPERS
+#=================================================
+
+#TODO: Open and execute
+
+# Create a sqlite database file
+#
+# usage: ynh_sqlite_create_db db
+# | arg: db - the database name to create
+# TODO: password protection
+ynh_sqlite_create_db() {
+    sqlite3 <<< ".save /var/www/$1/$1.sqlite3"
+}
+
+# Drop a database
+#
+# usage: ynh_sqlite_drop_db db
+# | arg: db - the database name to drop
+ynh_sqlite_drop_db() {
+    shred /var/www/$1/$1.sqlite3
+}
+
+# Dump a database
+#
+# example: ynh_sqlite_dump_db 'roundcube' > ./dump.sql
+#
+# usage: ynh_sqltie_dump_db db
+# | arg: db - the database name to dump
+# | ret: the sqlitedump output
+ynh_sqlite_dump_db() {
+    sqlite3 /var/www/$1.sqlite3 <<< ".dump"
+}
+
+#TODO: Test

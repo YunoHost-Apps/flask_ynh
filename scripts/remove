@@ -10,10 +10,23 @@ readonly app=$YNH_APP_INSTANCE_NAME
 readonly domain=$(ynh_app_setting_get "$app" domain)
 readonly app_system_name=$(ynh_app_setting_get "$app" system_name)
 readonly final_path=/var/www/$app_system_name
+readonly db_type=$(ynh_app_setting_get "$app" db_type)
 
-# Remove mysql table
-ynh_psql_drop_db $app_system_name
-ynh_psql_drop_user $app_system_name
+if [ "$db_type" = 'postgresql' ]
+then
+    # Remove postgresql table
+    ynh_psql_drop_db $app_system_name
+    ynh_psql_drop_user $app_system_name
+
+elif [ "$db_type" = 'sqlite' ]
+then
+    # Remove sqlite table
+    ynh_sqlite_drop_db $app_system_name
+
+else
+    err "Unknown database type, proceeding to app removing anyway.."
+fi
+
 
 # Remove dependencies
 ynh_remove_app_dependencies
