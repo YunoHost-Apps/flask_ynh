@@ -24,6 +24,7 @@ Todo
 
 - [ ] Really set app label
 - [ ] Handle public/private option
-- [ ] Be able to choose between sqlite and postgres
+- [ ] Enhance database setting and helpers
 - [ ] Document how to launch a dev server
 - [ ] ???
+- [x] Be able to choose between sqlite and postgres

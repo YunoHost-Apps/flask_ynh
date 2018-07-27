@@ -14,6 +14,7 @@ path=$YNH_APP_ARG_PATH
 readonly app_system_name=$YNH_APP_ARG_SYSTEM_NAME
 readonly app_display_name=$YNH_APP_ARG_DISPLAY_NAME
 readonly is_public=$YNH_APP_ARG_IS_PUBLIC
+readonly db_type=$YNH_APP_ARG_DB_TYPE
 
 readonly final_path=/var/www/$app_system_name
 
@@ -46,17 +47,28 @@ function configure_app()
     ynh_app_setting_set "$app" display_name "$app_display_name"
     ynh_app_setting_set "$app" system_name "$app_system_name"
     ynh_app_setting_set "$app" is_public "$is_public"
+    ynh_app_setting_set "$app" db_type "$db_type"
 }
 
 function install_dependencies()
 {
+    if [ "$db_type" = 'postgresql' ]
+    then
+        db_dependencies="postgresql postgresql-9.6 postgresql-server-dev-9.6"
+
+    elif [ "$db_type" = 'sqlite' ]
+    then
+        db_dependencies="sqlite3"
+
+    else
+        ynh_die "Unknown database type"
+    fi
+
     ynh_install_app_dependencies virtualenv \
                                  python3-dev \
                                  python3-virtualenv \
                                  python3-pip \
-                                 postgresql \
-                                 postgresql-9.6 \
-                                 postgresql-server-dev-9.6
+                                 $db_dependencies                             
 }
 
 function init_venv()
@@ -70,6 +82,8 @@ function init_venv()
     pip install Flask
     pip install Flask-Script
     pip install Flask-SQLAlchemy
+    #psycopg2 driver for sqlalchemy postgresql dialect (either that or pg8000)
+    if [ "$db_type" = 'postgresql' ]; then pip install psycopg2; fi
     pip install gunicorn
     popd
 }
@@ -80,10 +94,26 @@ function init_db()
     readonly db_name=$app_system_name
     readonly db_user=$app_system_name
     readonly db_pwd=$(ynh_string_random)
-    
-    # Initialize database and store pssql password for upgrade
-    ynh_psql_create_db $db_name $db_user $db_pwd
-    ynh_app_setting_set "$app" psqlpassword "$db_pwd"
+
+    if [ "$db_type" = 'postgresql' ]
+    then
+        # Initialize postgresql database
+        ynh_psql_create_db $db_name $db_user $db_pwd
+        readonly db_host=$db_user:$db_pwd@localhost #:$db_port
+
+    elif [ "$db_type" = 'sqlite' ]
+    then
+        # Initialize sqlite database  
+        # TODO: password
+        ynh_sqlite_create_db $db_name
+        readonly db_host=""
+
+    else
+        ynh_die "Unknown database type"
+    fi
+
+    # Store database password for upgrade
+    ynh_app_setting_set "$app" db_password "$db_pwd"
 }
 
 function configure_flask_app()
@@ -93,10 +123,13 @@ function configure_flask_app()
 
     # App settings
     ynh_replace_string "__YNH_DB_NAME__"     "$db_name"    ../conf/settings.py
+    ynh_replace_string "__YNH_DB_TYPE__"     "$db_type"    ../conf/settings.py
+    ynh_replace_string "__YNH_DB_HOST__"     "$db_host"    ../conf/settings.py
     ynh_replace_string "__YNH_DB_USER__"     "$db_user"    ../conf/settings.py
     ynh_replace_string "__YNH_DB_PASSWORD__" "$db_pwd"     ../conf/settings.py
     ynh_replace_string "__YNH_APP_WEBPATH__" "$path"       ../conf/settings.py
     ynh_replace_string "__YNH_APP_FSPATH__"  "$final_path" ../conf/settings.py
+
     cp ../conf/settings.py $final_path/app/settings_local.py
 
     # Gunicorn
