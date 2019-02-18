@@ -24,7 +24,7 @@ then
     ynh_sqlite_drop_db $app_system_name
 
 else
-    err "Unknown database type, proceeding to app removing anyway.."
+    echo "Unknown database type, proceeding to app removing anyway.." >&2
 fi
 
 
