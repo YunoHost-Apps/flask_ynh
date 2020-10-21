@@ -54,7 +54,7 @@ function install_dependencies()
 {
     if [ "$db_type" = 'postgresql' ]
     then
-        db_dependencies="postgresql postgresql-9.6 postgresql-server-dev-9.6"
+        db_dependencies="postgresql postgresql-server-dev-all"
 
     elif [ "$db_type" = 'sqlite' ]
     then

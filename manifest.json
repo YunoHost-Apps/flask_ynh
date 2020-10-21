@@ -11,7 +11,7 @@
         "email": "alex.aubin@mailoo.org"
     },
     "requirements": {
-        "yunohost": ">> 3.0.0"
+        "yunohost": ">> 3.8.0"
     },
     "version": "20180725",
     "multi_instance": "false",
