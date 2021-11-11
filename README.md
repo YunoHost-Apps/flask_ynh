@@ -23,20 +23,47 @@ You can then use it to :
 - Python 3
 - Flask
 - SQLAlchemy
-- PostgreSQL or MySQL (optional)
+- PostgreSQL, MySQL or SQLite (optional)
 - Gunicorn
 
 **Shipped version:** 2.0
 
 ## Configuration
 
-## Documentation
+ * the flask app is located at: `/var/www/flask/app/`
+ * log files: `/var/log/flask/error.log`
+ * load changed python app: `service flask restart`
 
- * YunoHost documentation: https://yunohost.org/en/app_flask
+### Log into virtualenv
+
+```
+cd /var/www/flask
+. venv/bin/activate
+```
+
+#### Commands inside virtualenv
+
+Install additional python packages:
+ - pip install --upgrade opencv-python
+
+Initialize Database:
+ - python -c "from app import db, create_app; app = create_app(); app.app_context().push(); db.create_all()"
+
+#### Logout from virtualenv
+
+```
+deactivate
+```
 
 ## YunoHost specific features
 
-#### Multi-users support
+ * Integrate flask_login with YunoHost users and SSO
+ * Allow multiple instances of this application
+
+## Documentation and resources
+
+ * YunoHost documentation: https://yunohost.org/en/app_flask
+ * Flask documentation: https://flask.palletsprojects.com/
 
 #### Supported architectures
 
