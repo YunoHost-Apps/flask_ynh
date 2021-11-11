@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 
 # (N.B : the site root is also related to the nginx conf!)
-SITE_ROOT = "__YNH_APP_WEBPATH__"
+SITE_ROOT = "__PATH__"
+
+SECRET_KEY = "_SECRET_KEY_"
 
 DEBUG = False
 TEMPLATE_DEBUG = False
 
-#APP_FSPATH = "__YNH_APP_FSPATH"
+#APP_FSPATH = "__FINALPATH"
 
-SQLALCHEMY_DATABASE_URI = '__YNH_DB_TYPE__://__YNH_DB_HOST__/__YNH_DB_NAME__'
+SQLALCHEMY_DATABASE_URI = '_DB_TYPE_://_DB_HOST_/_DB_NAME_'
 
-#DB_NAME = "__YNH_DB_NAME__"
-#DB_USER = "__YNH_DB_USER__"
-#DB_PASS = "__YNH_DB_PASSWORD__"
+#DB_NAME = "_DB_NAME_"
+#DB_USER = "_DB_USER_"
+#DB_PASS = "_DB_PASSWORD_"
