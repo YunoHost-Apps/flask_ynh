@@ -37,6 +37,7 @@ You can then use it to :
 ### Log into virtualenv
 
 ```
+su -s /bin/bash flask
 cd /var/www/flask
 . venv/bin/activate
 ```
@@ -44,7 +45,7 @@ cd /var/www/flask
 #### Commands inside virtualenv
 
 Install additional python packages:
- - pip install --upgrade opencv-python
+ - pip install --upgrade requests
 
 Initialize Database:
  - python -c "from app import db, create_app; app = create_app(); app.app_context().push(); db.create_all()"
@@ -53,6 +54,7 @@ Initialize Database:
 
 ```
 deactivate
+exit
 ```
 
 ## YunoHost specific features

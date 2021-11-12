@@ -187,7 +187,7 @@ ynh_add_nginx_config
 
 mkdir -p $final_path
 pushd $final_path
-python3 -m venv venv
+python3 -m venv --system-site-packages venv
 set +o nounset
 . venv/bin/activate
 set -o nounset
