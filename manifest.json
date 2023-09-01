@@ -44,7 +44,7 @@
             },
             {
                 "name": "db_type",
-                "type": "string",
+                "type": "select",
                 "choices": ["postgresql", "mysql", "sqlite", "none"],
                 "default": "sqlite",
                 "ask": {
