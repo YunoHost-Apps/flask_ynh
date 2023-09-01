@@ -192,7 +192,7 @@ set +o nounset
 . venv/bin/activate
 set -o nounset
 pip install --upgrade Flask
-if [ "$db_type" != '' ]; then pip install --upgrade Flask-SQLAlchemy ; fi
+if [ "$db_type" != 'none' ]; then pip install --upgrade Flask-SQLAlchemy ; fi
 pip install --upgrade flask-login
 pip install --upgrade gunicorn
 #psycopg2 driver for sqlalchemy postgresql dialect
