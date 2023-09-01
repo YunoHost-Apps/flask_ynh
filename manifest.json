@@ -49,7 +49,7 @@
                 "default": "sqlite",
                 "ask": {
                     "en": "Choose the database to use",
-                    "fr": "Choisissez la base de donnée à utiliser"
+                    "fr": "Choisissez la base de données à utiliser"
                 }
             }
         ]
