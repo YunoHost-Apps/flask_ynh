@@ -192,7 +192,7 @@ set +o nounset
 . venv/bin/activate
 set -o nounset
 pip install --upgrade Flask
-pip install --upgrade Flask-SQLAlchemy
+if [ "$db_type" != '' ]; then pip install --upgrade Flask-SQLAlchemy ; fi
 pip install --upgrade flask-login
 pip install --upgrade gunicorn
 #psycopg2 driver for sqlalchemy postgresql dialect
@@ -300,6 +300,7 @@ then
 	ynh_replace_string --match_string="_DB_NAME_" --replace_string="$final_path/sqlite.db" --target_file="$final_path/app/settings_local.py"
 else
 	db_host=""
+	ynh_replace_string --match_string="SQLALCHEMY_DATABASE_URI" --replace_string="#SQLALCHEMY_DATABASE_URI" --target_file="$final_path/app/settings_local.py"
 	ynh_store_file_checksum --file="$final_path/app/settings_local.py"
 fi
 
