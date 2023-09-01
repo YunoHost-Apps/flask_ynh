@@ -3,10 +3,10 @@
     "id": "flask",
     "packaging_format": 1,
     "description": {
-        "en": "Setup a 'Hello World' Flask app template with Nginx and a database.",
-        "fr": "Met en place un modèle 'Hello World' d'application Flask avec Nginx et une base de donnée."
+        "en": "Setup a 'Hello World' Flask app template with Nginx and an optional database.",
+        "fr": "Met en place un modèle 'Hello World' d'application Flask avec Nginx et une base de données optionnelle."
     },
-    "version": "2.0~ynh1",
+    "version": "2.0~ynh2",
     "url": "https://palletsprojects.com/p/flask/",
     "license": "BSD-3-Clause",
     "maintainer": {
@@ -18,7 +18,7 @@
         "email": "alex.aubin@mailoo.org"
     }],
     "requirements": {
-        "yunohost": ">= 4.2.3"
+        "yunohost": ">= 11.2.4"
     },
     "multi_instance": true,
     "services": [
