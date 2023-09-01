@@ -278,29 +278,23 @@ ynh_replace_string --match_string="_SECRET_KEY_" --replace_string="$secret_key" 
 if [ $db_type = "mysql" ]
 then
 	db_host="$db_user:$db_pwd@localhost"
-	ynh_replace_string --match_string="_DB_TYPE_" --replace_string="mysql" --target_file="$final_path/app/settings_local.py"
 	ynh_replace_string --match_string="_DB_HOST_" --replace_string="$db_host" --target_file="$final_path/app/settings_local.py"
-	ynh_replace_string --match_string="_DB_NAME_" --replace_string="$db_name" --target_file="$final_path/app/settings_local.py"
-	ynh_replace_string --match_string="_DB_USER_" --replace_string="$db_user" --target_file="$final_path/app/settings_local.py"
-	ynh_replace_string --match_string="_DB_PASSWORD_" --replace_string="$db_pwd" --target_file="$final_path/app/settings_local.py"
 	ynh_store_file_checksum --file="$final_path/app/settings_local.py"
 elif [ $db_type = "postgresql" ]
 then
 	db_host="$db_user:$db_pwd@localhost"
-	ynh_replace_string --match_string="_DB_TYPE_" --replace_string="postgresql" --target_file="$final_path/app/settings_local.py"
 	ynh_replace_string --match_string="_DB_HOST_" --replace_string="$db_host" --target_file="$final_path/app/settings_local.py"
-	ynh_replace_string --match_string="_DB_NAME_" --replace_string="$db_name" --target_file="$final_path/app/settings_local.py"
-	ynh_replace_string --match_string="_DB_USER_" --replace_string="$db_user" --target_file="$final_path/app/settings_local.py"
-	ynh_replace_string --match_string="_DB_PASSWORD_" --replace_string="$db_pwd" --target_file="$final_path/app/settings_local.py"
 	ynh_store_file_checksum --file="$final_path/app/settings_local.py"
 elif [ $db_type = "sqlite" ]
 then
-	ynh_replace_string --match_string="_DB_TYPE_" --replace_string="sqlite" --target_file="$final_path/app/settings_local.py"
-	ynh_replace_string --match_string="_DB_HOST_" --replace_string="" --target_file="$final_path/app/settings_local.py"
-	ynh_replace_string --match_string="_DB_NAME_" --replace_string="$final_path/sqlite.db" --target_file="$final_path/app/settings_local.py"
+	ynh_replace_string --match_string="DB_PASS" --replace_string="#DB_PASS" --target_file="$final_path/app/settings_local.py"
+	ynh_store_file_checksum --file="$final_path/app/settings_local.py"
 else
 	db_host=""
 	ynh_replace_string --match_string="SQLALCHEMY_DATABASE_URI" --replace_string="#SQLALCHEMY_DATABASE_URI" --target_file="$final_path/app/settings_local.py"
+	ynh_replace_string --match_string="_DB_NAME_" --replace_string="#_DB_NAME_" --target_file="$final_path/app/settings_local.py"
+	ynh_replace_string --match_string="_DB_USER_" --replace_string="#_DB_USER_" --target_file="$final_path/app/settings_local.py"
+	ynh_replace_string --match_string="DB_PASS" --replace_string="#DB_PASS" --target_file="$final_path/app/settings_local.py"
 	ynh_store_file_checksum --file="$final_path/app/settings_local.py"
 fi
 
