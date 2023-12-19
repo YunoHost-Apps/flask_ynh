@@ -7,10 +7,7 @@ User=__APP__
 Group=__APP__
 WorkingDirectory=__DATA_DIR__/
 
-# UVICORN_ROOT_PATH is used by Flask to serve the 'docs' page correctly
-Environment="UVICORN_ROOT_PATH=__PATH__"
-
-ExecStart=__INSTALL_DIR__/venv/bin/gunicorn --config __INSTALL_DIR__/gunicorn.conf.py flask-app:app --worker-class uvicorn.workers.UvicornWorker
+ExecStart=__INSTALL_DIR__/venv/bin/gunicorn --config __INSTALL_DIR__/gunicorn.conf.py flask-app:app
 
 StandardOutput=syslog
 StandardError=syslog

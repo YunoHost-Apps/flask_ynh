@@ -43,8 +43,8 @@ ram.runtime = "50M"
     type = "password"
 
     [install.db_type]
-    help.en = "Choose the database to use"
-    help.fr = "Choisissez la base de donnée à utiliser"
+    ask.en = "Choose the database to use"
+    ask.fr = "Choisissez la base de donnée à utiliser"
     type = "select"
     choices.postgresql = "PostgreSQL"
     choices.sqlite = "SQLite"
