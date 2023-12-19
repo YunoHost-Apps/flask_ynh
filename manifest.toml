@@ -40,14 +40,12 @@ ram.runtime = "50M"
     default = "visitors"
 
     [install.password]
-    help.en = "Password that you will need to upload your code on YunoHost"
-    help.fr = "Le mot de passe que vous utiliserez pour téléverser votre code sur YunoHost"
     type = "password"
 
     [install.db_type]
     help.en = "Choose the database to use"
     help.fr = "Choisissez la base de donnée à utiliser"
-    type = "string"
+    type = "select"
     choices.postgresql = "PostgreSQL"
     choices.sqlite = "SQLite"
     choices.mariadb = "MariaDB"
