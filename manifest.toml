@@ -49,6 +49,8 @@ ram.runtime = "50M"
     choices.postgresql = "PostgreSQL"
     choices.sqlite = "SQLite"
     choices.mariadb = "MariaDB"
+    choices.none = "None"
+    default = "none"
 
 [resources]
     [resources.system_user]
