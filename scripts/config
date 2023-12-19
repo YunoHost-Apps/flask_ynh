@@ -1,0 +1,74 @@
+#!/bin/bash
+# In simple cases, you don't need a config script. 
+
+# With a simple config_panel.toml, you can write in the app settings, in the 
+# upstream config file or replace complete files (logo ...) and restart services.
+
+# The config scripts allows you to go further, to handle specific cases 
+# (validation of several interdependent fields, specific getter/setter for a value,
+# display dynamic informations or choices, pre-loading of config type .cube... ).
+
+#=================================================
+# GENERIC STARTING
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
+source /usr/share/yunohost/helpers
+
+ynh_abort_if_errors
+
+#=================================================
+# RETRIEVE ARGUMENTS
+#=================================================
+
+install_dir=$(ynh_app_setting_get --app=$app --key=install_dir)
+data_dir=$(ynh_app_setting_get --app=$app --key=data_dir)
+
+#=================================================
+# SPECIFIC SETTERS FOR TOML SHORT KEYS
+#=================================================
+
+#=================================================
+# GENERIC FINALIZATION
+#=================================================
+
+ynh_app_config_apply() {
+    _ynh_app_config_apply
+
+    #TODO : add password question to configuration panel
+    password=""
+    # Set new password
+    if [ ! "$password" == "" ]
+    then
+        ynh_print_info --message="Changing password for user ${app}"
+        chpasswd <<< "${app}:${password}"
+    fi
+
+    ynh_script_progression --message="Stopping a systemd service..." --weight=1
+    ynh_systemd_action --service_name=$app --action="stop" --log_path="/var/log/$app/$app.log"
+
+    # Symbolic link to main app folder
+    if [ ! "$main_folder" == "flask-app" ]
+    then
+        ynh_print_info --message="Deleting $data_dir/flask-app"
+        rm -rf "$data_dir/flask-app"
+        ynh_print_info --message="Creating symbolic link to folder ${main_folder}"
+        ln -s "$data_dir/$main_folder" "$data_dir/flask-app"
+    fi
+
+    if [ ! "$requirements_path" == "" ]
+    then
+        ynh_print_info --message="Installing python custom requirements"
+        # Enable python virtual environnement
+        source $install_dir/venv/bin/activate
+
+        # Install user's custom requirements
+        pip install -r $data_dir/$requirements_path
+    fi
+
+    ynh_script_progression --message="Starting a systemd service..." --weight=1
+    ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
+}
+
+ynh_app_config_run $1

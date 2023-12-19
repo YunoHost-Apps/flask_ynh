@@ -1,9 +1,10 @@
-Some long and extensive description of what the app is and does, lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+This Application install a Flask application "Hello Word" ready to be customized by your own code.
 
 ### Features
-
-- Ut enim ad minim veniam, quis nostrud exercitation ullamco ;
-- Laboris nisi ut aliquip ex ea commodo consequat ;
-- Duis aute irure dolor in reprehenderit in voluptate ;
-- Velit esse cillum dolore eu fugiat nulla pariatur ;
-- Excepteur sint occaecat cupidatat non proident, sunt in culpa."
+- [x] Create a demo "Hello World" App
+- [x] Grant access to SSH/SFTP on the folder
+- [ ] Allow to change the default folder
+- [ ] Allow to install requirements on the web admin
+- [ ] Allow to configure app name during install
+- [ ] Choose a database (SQLite, MariaDB, PostgreSQL, none)
+- [ ] Automatic git pull
