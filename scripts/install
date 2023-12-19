@@ -48,6 +48,7 @@ mkdir -p "$data_dir/flask-app"
 ynh_add_config --template="__init__.py" --destination="$data_dir/flask-app/__init__.py"
 ynh_app_setting_set --app=$app --key=main_folder --value="flask-app"
 ynh_app_setting_set --app=$app --key=requirements_path --value=""
+ynh_app_setting_set --app=$app --key=password --value=$password
 
 # Add the password to this user
 chpasswd <<< "${app}:${password}"
