@@ -1,7 +1,8 @@
 from flask import Flask, Blueprint, request
+from .settings import SITE_PATH
 
 # Use Blueprints to automatically use the app subfolder
-bp = Blueprint('main', __name__, url_prefix='__PATH__')
+bp = Blueprint('main', __name__, url_prefix=SITE_PATH)
 
 # Define your routes
 @bp.route("/")
