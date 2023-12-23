@@ -52,6 +52,15 @@ ram.runtime = "50M"
     choices.none = "None"
     default = "none"
 
+    [install.admin_route]
+    ask.en = "Add an sso protected route"
+    ask.fr = "Définir une route protégée par le sso"
+    type = "path"
+    optional = true
+    example = "/user"
+    help.en = "Consider using a less common route than `/admin`."
+    help.fr = "Préférez utiliser une route moins commune que `/admin`"
+
 [resources]
     [resources.system_user]
     allow_sftp = true

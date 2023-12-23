@@ -1,5 +1,6 @@
 from flask import Flask, Blueprint, request
 from .settings import SITE_PATH
+import sqlite3
 
 # Use Blueprints to automatically use the app subfolder
 bp = Blueprint('main', __name__, url_prefix=SITE_PATH)
@@ -20,6 +21,18 @@ def user():
         return f'<p>Hello, {name}! Your ID is {id} and e-mail is {email}.</p>'
     else:
         return "<p>Hello, Anonymous!</p>"
+    
+# Example to use SQLite
+@bp.route("/sqlite")
+def sqlite():
+    con = sqlite3.connect("tutorial.db")
+    cur = con.cursor()
+    try:
+        cur.execute("CREATE TABLE movie(title, year, score)")
+    finally:
+        res = cur.execute("SELECT name FROM sqlite_master")
+        data = res.fetchone()
+        return str(data)
 
 # After defining all routes, create Flask app and register Blueprint.
 app = Flask(__name__)

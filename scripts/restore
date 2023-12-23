@@ -88,6 +88,9 @@ ynh_script_progression --message="Integrating service in YunoHost..."
 
 yunohost service add $app --description="Gunicorn running a Flask app" --log="/var/log/$app/$app.log"
 
+if [[ -n "$admin_route" ]]; then
+    ynh_permission_create --permission="admin" --url="/$admin_route" --allowed="admins"
+
 #=================================================
 # RESTORE THE LOGROTATE CONFIGURATION
 #=================================================

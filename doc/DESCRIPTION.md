@@ -7,7 +7,7 @@ This Application install a Flask application "Hello Word" ready to be customized
 - [x] Allow to change the default folder on the web admin
 - [x] Allow to install requirements on the web admin
 - [x] Allow to configure app name during install on the web admin
-- [ ] Choose a database (SQLite, MariaDB, PostgreSQL, none)
+- [x] Choose a database (SQLite, MariaDB, PostgreSQL, none)
 - [ ] Automatic git pull
-- [ ] Définir une route "admin" protégée par SSO
+- [x] Définir une route "admin" protégée par SSO
 - [ ] Exemple d'intégration LDAP

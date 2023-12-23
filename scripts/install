@@ -18,6 +18,9 @@ ynh_script_progression --message="Storing installation settings..."
 log_file="/var/log/$app/$app.log"
 ynh_app_setting_set --app=$app --key=log_file --value="$log_file"
 
+if [[ -n "$admin_route" ]]; then
+    ynh_permission_create --permission="admin" --url="/$admin_route" --allowed="admins"
+
 #=================================================
 # SETUP LOG FILE
 #=================================================
