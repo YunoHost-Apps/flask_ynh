@@ -10,4 +10,4 @@ Cette application installe une application Flask "Hello world" prête à être p
 - [x] Choisir une base de données (SQLite, MariaDB, PostgreSQL, aucune)
 - [ ] Mises à jour automatiques via Git pull
 - [x] Définir une route "admin" protégée par SSO
-- [ ] Exemple d'intégration LDAP
+- [x] Exemple d'intégration LDAP

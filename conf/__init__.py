@@ -1,6 +1,7 @@
 from flask import Flask, Blueprint, request
 from .settings import SITE_PATH
 import sqlite3
+import ldap
 
 # Use Blueprints to automatically use the app subfolder
 bp = Blueprint('main', __name__, url_prefix=SITE_PATH)
@@ -18,7 +19,15 @@ def user():
         name = request.headers.get('Name')
         email = request.headers.get('Email')
 
-        return f'<p>Hello, {name}! Your ID is {id} and e-mail is {email}.</p>'
+        l = ldap.initialize("ldap://localhost")
+        l.simple_bind_s("", "")
+        ldapuser = l.search_s(f"uid={id},ou=users,dc=yunohost,dc=org", 
+                   ldap.SCOPE_SUBTREE, 
+                   f"(&(|(objectclass=posixAccount))(uid={id})(permission=cn=__APP__.main,ou=permission,dc=yunohost,dc=org))")
+        
+        firstname = str(ldapuser[0][1]['givenName'][0])
+
+        return f'<p>Hello, {name}! Your ID is {id} and e-mail is {email}. Found {firstname} on LDAP.</p>'
     else:
         return "<p>Hello, Anonymous!</p>"
     
