@@ -90,6 +90,7 @@ yunohost service add $app --description="Gunicorn running a Flask app" --log="/v
 
 if [[ -n "$admin_route" ]]; then
     ynh_permission_create --permission="admin" --url="/$admin_route" --allowed="admins"
+fi 
 
 #=================================================
 # RESTORE THE LOGROTATE CONFIGURATION
