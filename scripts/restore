@@ -45,6 +45,34 @@ ynh_script_progression --message="Create and setup Python virtualenv..." --weigh
 myynh_setup_python_venv
 
 #=================================================
+# RESTORE THE DATABASE
+#=================================================
+
+if [ $db_type = "mariadb" ]
+then
+
+	ynh_script_progression --message="Restoring the MySQL database..."
+
+	db_pwd=$(ynh_app_setting_get --app=$app --key=mysqlpwd)
+	ynh_mysql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
+	ynh_mysql_connect_as --user=$db_user --password=$db_pwd --database=$db_name < ./db.sql
+
+elif [ $db_type = "postgresql" ]
+then
+
+	ynh_script_progression --message="Restoring the PostgreSQL database..." 
+
+	db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
+	ynh_psql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
+	ynh_psql_connect_as --user=$db_user --password=$db_pwd --database=$db_name < ./db.sql
+
+else
+
+	ynh_script_progression --message="No database to restore..." 
+
+fi
+
+#=================================================
 # RESTORE SYSTEMD
 #=================================================
 ynh_script_progression --message="Restoring the systemd $app configuration..."
