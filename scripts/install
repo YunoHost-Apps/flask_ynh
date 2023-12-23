@@ -39,7 +39,7 @@ myynh_setup_python_venv
 
 #=================================================
 # copy config files
-# ================================================
+#=================================================
 ynh_script_progression --message="Create $app configuration files..."
 
 ynh_add_config --template="gunicorn.conf.py" --destination="$install_dir/gunicorn.conf.py"
@@ -54,6 +54,35 @@ ynh_app_setting_set --app=$app --key=password --value=$password
 # Add the password to this user
 chpasswd <<< "${app}:${password}"
 
+#=================================================
+# SETUP DATABASE
+#=================================================
+
+if [ $db_type = "mysql" ]
+then
+
+	ynh_script_progression --message="Creating a MySQL database..."
+
+	db_name=$(ynh_sanitize_dbid --db_name=$app)
+	db_user=$db_name
+	ynh_app_setting_set --app=$app --key=db_name --value=$db_name
+	ynh_mysql_setup_db --db_user=$db_user --db_name=$db_name
+
+elif [ $db_type = "postgresql" ]
+then
+
+	ynh_script_progression --message="Creating a PostgreSQL database..."
+
+	db_name=$(ynh_sanitize_dbid --db_name=$app)
+	db_user=$db_name
+	ynh_app_setting_set --app=$app --key=db_name --value=$db_name
+	ynh_psql_setup_db --db_user=$db_user --db_name=$db_name
+
+else
+
+	ynh_script_progression --message="Skipping database..." --time --weight=1
+
+fi
 #=================================================
 # GENERIC FINALIZATION
 #=================================================
