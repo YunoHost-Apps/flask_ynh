@@ -38,23 +38,6 @@ ynh_add_config --template="requirements.txt" --destination="$install_dir/require
 myynh_setup_python_venv
 
 #=================================================
-# copy config files
-#=================================================
-ynh_script_progression --message="Create $app configuration files..."
-
-ynh_add_config --template="gunicorn.conf.py" --destination="$install_dir/gunicorn.conf.py"
-
-mkdir -p "$data_dir/flask-app"
-ynh_add_config --template="__init__.py" --destination="$data_dir/flask-app/__init__.py"
-ynh_add_config --template="settings.py" --destination="$data_dir/flask-app/settings.py"
-ynh_app_setting_set --app=$app --key=main_folder --value="flask-app"
-ynh_app_setting_set --app=$app --key=requirements_path --value=""
-ynh_app_setting_set --app=$app --key=password --value=$password
-
-# Add the password to this user
-chpasswd <<< "${app}:${password}"
-
-#=================================================
 # SETUP DATABASE
 #=================================================
 
@@ -83,6 +66,25 @@ else
 	ynh_script_progression --message="Skipping database..." --time --weight=1
 
 fi
+
+
+#=================================================
+# copy config files
+#=================================================
+ynh_script_progression --message="Create $app configuration files..."
+
+ynh_add_config --template="gunicorn.conf.py" --destination="$install_dir/gunicorn.conf.py"
+
+mkdir -p "$data_dir/flask-app"
+ynh_add_config --template="__init__.py" --destination="$data_dir/flask-app/__init__.py"
+ynh_add_config --template="settings.py" --destination="$data_dir/flask-app/settings.py"
+ynh_app_setting_set --app=$app --key=main_folder --value="flask-app"
+ynh_app_setting_set --app=$app --key=requirements_path --value=""
+ynh_app_setting_set --app=$app --key=password --value=$password
+
+# Add the password to this user
+chpasswd <<< "${app}:${password}"
+
 #=================================================
 # GENERIC FINALIZATION
 #=================================================
