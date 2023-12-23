@@ -41,7 +41,7 @@ myynh_setup_python_venv
 # SETUP DATABASE
 #=================================================
 
-if [ $db_type = "mysql" ]
+if [ $db_type = "mariadb" ]
 then
 
 	ynh_script_progression --message="Creating a MySQL database..."
@@ -64,6 +64,8 @@ then
 else
 
 	ynh_script_progression --message="Skipping database..." --time --weight=1
+    db_name="None"
+	db_user="None"
 
 fi
 
