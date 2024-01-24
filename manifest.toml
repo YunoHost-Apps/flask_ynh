@@ -1,0 +1,81 @@
+#:schema https://raw.githubusercontent.com/YunoHost/apps/master/schemas/manifest.v2.schema.json
+
+packaging_format = 2
+
+id = "flask"
+name = "Flask Template"
+description.en = "Application to install a Flask application"
+description.fr = "Application permettant d'installer un site Flask"
+
+version = "1.0~ynh2"
+
+maintainers = ["Gildas-GH"]
+
+[upstream]
+license = "WTFPL"
+
+[integration]
+yunohost = ">= 11.2.5"
+architectures = "all"
+multi_instance = true
+
+ldap = "not_relevant"
+
+sso = true
+
+disk = "50M"
+ram.build = "350M"
+ram.runtime = "50M"
+
+[install]
+    [install.domain]
+    type = "domain"
+
+    [install.path]
+    type = "path"
+    default = "/app"
+
+    [install.init_main_permission]
+    type = "group"
+    default = "visitors"
+
+    [install.password]
+    type = "password"
+
+    [install.db_type]
+    ask.en = "Choose the database to use"
+    ask.fr = "Choisissez la base de donnée à utiliser"
+    type = "select"
+    choices.postgresql = "PostgreSQL"
+    choices.sqlite = "SQLite"
+    choices.mariadb = "MariaDB"
+    choices.none = "None"
+    default = "none"
+
+    [install.admin_route]
+    ask.en = "Add an sso protected route"
+    ask.fr = "Définir une route protégée par le sso"
+    type = "path"
+    optional = true
+    example = "/user"
+    help.en = "Consider using a less common route than `/admin`."
+    help.fr = "Préférez utiliser une route moins commune que `/admin`"
+
+[resources]
+    [resources.system_user]
+    allow_sftp = true
+    allow_ssh = true
+    home = "/home/yunohost.app/__APP__"
+
+    [resources.install_dir]
+
+    [resources.data_dir]
+    dir = "/home/yunohost.app/__APP__"
+
+    [resources.permissions]
+    main.url = "/"
+
+    [resources.ports]
+
+    [resources.apt]
+    packages = "python3-dev, python3-pip, python3-venv"

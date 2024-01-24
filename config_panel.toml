@@ -1,0 +1,28 @@
+version = "1.0"
+
+[main]
+name.en = "Information about your app's code"
+name.fr = "Information à propos de votre propre code"
+
+    [main.custom_code]
+        [main.custom_code.main_folder]
+        ask.en = "Name of your app's main folder"
+        ask.fr = "Nom du dossier de votre application"
+        type = "path"
+        default = "flask-app"
+        help.fr = "C'est le dossier contenant l'objet 'app' dans le fichier __init__.py"
+        help.en = "It's the folder containing the object 'app' in __init__.py"
+
+        [main.custom_code.requirements_path]
+        ask.en = "Install new dependencies with this requirements.txt file"
+        ask.fr = "Installez de nouvelles dépendances avec ce fichier requirements.txt"
+        type = "path"
+        optional = true
+        help.en = "Relative path to your requirement file, including it's name"
+        help.fr = "Lien relatif jusqu'au fichier requirements.txt, incluant son nom"
+
+        [main.custom_code.password]
+        ask.en = "Password to connect via SSH / SFTP"
+        ask.fr = "Mot de passe pour vous connecter en SSH / SFTP"
+        type = "password"
+        optional = true

@@ -1,188 +1,125 @@
 #!/bin/bash
 
-# Exit on command errors and treat unset variables as an error
-set -eu
+#=================================================
+# GENERIC START
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
 
-# Source YunoHost helpers
+source _common.sh
 source /usr/share/yunohost/helpers
-source _future.sh
 
-# Retrieve manifest arguments
-app=$YNH_APP_INSTANCE_NAME
-domain=$YNH_APP_ARG_DOMAIN
-path=$YNH_APP_ARG_PATH
-readonly app_system_name=$YNH_APP_ARG_SYSTEM_NAME
-readonly app_display_name=$YNH_APP_ARG_DISPLAY_NAME
-readonly is_public=$YNH_APP_ARG_IS_PUBLIC
-readonly db_type=$YNH_APP_ARG_DB_TYPE
+#=================================================
+# SETTINGS
+#=================================================
+ynh_script_progression --message="Storing installation settings..."
 
-readonly final_path=/var/www/$app_system_name
+# Logging:
+log_file="/var/log/$app/$app.log"
+ynh_app_setting_set --app=$app --key=log_file --value="$log_file"
 
-function main()
-{
-    check_assertions
-    configure_app
-    install_dependencies
-    init_venv
-    init_db
-    configure_flask_app
-    configure_service
-    configure_nginx_and_ssowat
-    start_app
-}
+if [[ -n "$admin_route" ]]; then
+    ynh_permission_create --permission="admin" --url="/$admin_route" --allowed="admins"
+fi 
 
-function check_assertions()
-{
-    if su postgres -c "psql -lqt | cut -d \| -f 1 | grep -qw test"
-    then
-        ynh_die "Database already exists :<"
-    fi
-    # app_system_name is made of [a-z0-9]
-    # app_display_name is made of [a-zA-Z0-9 ]
-}
+#=================================================
+# SETUP LOG FILE
+#=================================================
+ynh_script_progression --message="Setup logging..."
 
-function configure_app()
-{
-    ynh_webpath_register $app $domain $path
-    ynh_app_setting_set "$app" display_name "$app_display_name"
-    ynh_app_setting_set "$app" system_name "$app_system_name"
-    ynh_app_setting_set "$app" is_public "$is_public"
-    ynh_app_setting_set "$app" db_type "$db_type"
-}
+myynh_setup_log_file
 
-function install_dependencies()
-{
-    if [ "$db_type" = 'postgresql' ]
-    then
-        db_dependencies="postgresql postgresql-server-dev-all"
+# Use logrotate to manage application logfile(s)
+ynh_use_logrotate --logfile="$log_file" --specific_user=$app
 
-    elif [ "$db_type" = 'sqlite' ]
-    then
-        db_dependencies="sqlite3"
+#=================================================
+# PYTHON VIRTUALENV
+#=================================================
+ynh_script_progression --message="Create and setup Python virtualenv..." --weight=45
 
-    else
-        ynh_die "Unknown database type"
-    fi
+ynh_add_config --template="requirements.txt" --destination="$install_dir/requirements.txt"
 
-    ynh_install_app_dependencies virtualenv \
-                                 python3-dev \
-                                 python3-virtualenv \
-                                 python3-pip \
-                                 $db_dependencies                             
-}
+myynh_setup_python_venv
 
-function init_venv()
-{
-    mkdir -p $final_path
-    pushd $final_path
-    virtualenv -p python3 venv
-    set +o nounset 
-    source venv/bin/activate
-    set -o nounset 
-    pip install Flask
-    pip install Flask-Script
-    pip install Flask-SQLAlchemy
-    #psycopg2 driver for sqlalchemy postgresql dialect (either that or pg8000)
-    if [ "$db_type" = 'postgresql' ]; then pip install psycopg2; fi
-    pip install gunicorn
-    popd
-}
+#=================================================
+# SETUP DATABASE
+#=================================================
 
-function init_db()
-{
-    # Generate random password
-    readonly db_name=$app_system_name
-    readonly db_user=$app_system_name
-    readonly db_pwd=$(ynh_string_random)
+if [ $db_type = "mariadb" ]
+then
 
-    if [ "$db_type" = 'postgresql' ]
-    then
-        # Initialize postgresql database
-        ynh_psql_create_db $db_name $db_user $db_pwd
-        readonly db_host=$db_user:$db_pwd@localhost #:$db_port
+	ynh_script_progression --message="Creating a MySQL database..."
 
-    elif [ "$db_type" = 'sqlite' ]
-    then
-        # Initialize sqlite database  
-        # TODO: password
-        ynh_sqlite_create_db $db_name
-        readonly db_host=""
+	db_name=$(ynh_sanitize_dbid --db_name=$app)
+	db_user=$db_name
+	ynh_app_setting_set --app=$app --key=db_name --value=$db_name
+	ynh_mysql_setup_db --db_user=$db_user --db_name=$db_name
 
-    else
-        ynh_die "Unknown database type"
-    fi
+elif [ $db_type = "postgresql" ]
+then
 
-    # Store database password for upgrade
-    ynh_app_setting_set "$app" db_password "$db_pwd"
-}
+	ynh_script_progression --message="Creating a PostgreSQL database..."
 
-function configure_flask_app()
-{
-    # Copy hello-world sources
-    cp -r ../sources/* $final_path/
+	db_name=$(ynh_sanitize_dbid --db_name=$app)
+	db_user=$db_name
+	ynh_app_setting_set --app=$app --key=db_name --value=$db_name
+	ynh_psql_setup_db --db_user=$db_user --db_name=$db_name
 
-    # App settings
-    ynh_replace_string "__YNH_DB_NAME__"     "$db_name"    ../conf/settings.py
-    ynh_replace_string "__YNH_DB_TYPE__"     "$db_type"    ../conf/settings.py
-    ynh_replace_string "__YNH_DB_HOST__"     "$db_host"    ../conf/settings.py
-    ynh_replace_string "__YNH_DB_USER__"     "$db_user"    ../conf/settings.py
-    ynh_replace_string "__YNH_DB_PASSWORD__" "$db_pwd"     ../conf/settings.py
-    ynh_replace_string "__YNH_APP_WEBPATH__" "$path"       ../conf/settings.py
-    ynh_replace_string "__YNH_APP_FSPATH__"  "$final_path" ../conf/settings.py
+else
 
-    cp ../conf/settings.py $final_path/app/settings_local.py
+	ynh_script_progression --message="Skipping database..." 
+    db_name="None"
+	db_user="None"
 
-    # Gunicorn
-    ynh_replace_string "__YNH_APP_NAME__" "$app_system_name" ../conf/gunicorn.py
-    ynh_replace_string "__YNH_APP_PATH__" "$final_path"      ../conf/gunicorn.py
-    cp ../conf/gunicorn.py $final_path/
+fi
 
-    # Init db
-    pushd $final_path
-    set +o nounset 
-    source venv/bin/activate
-    set -o nounset 
-    ./manage.py nuke
-    ./manage.py lorem
-    popd
 
-    # Set permissions
-    useradd $app_system_name -d $final_path || echo "User already exists"
-    chown -R $app_system_name:www-data $final_path
-}
+#=================================================
+# copy config files
+#=================================================
+ynh_script_progression --message="Create $app configuration files..."
 
-function configure_service()
-{
-    # Log folder
-    mkdir -p /var/log/$app_system_name
-    chown -R $app_system_name:www-data /var/log/$app_system_name
+ynh_add_config --template="gunicorn.conf.py" --destination="$install_dir/gunicorn.conf.py"
 
-    # Systemd config
-    ynh_replace_string "__YNH_APP_NAME__" "$app_system_name" ../conf/app.service
-    ynh_replace_string "__YNH_APP_PATH__" "$final_path"      ../conf/app.service
-    cp ../conf/app.service /etc/systemd/system/$app_system_name.service
+mkdir -p "$data_dir/flask-app"
+ynh_add_config --template="__init__.py" --destination="$data_dir/flask-app/__init__.py"
+ynh_add_config --template="settings.py" --destination="$data_dir/flask-app/settings.py"
+ynh_app_setting_set --app=$app --key=main_folder --value="flask-app"
+ynh_app_setting_set --app=$app --key=requirements_path --value=""
+ynh_app_setting_set --app=$app --key=password --value=$password
 
-    systemctl daemon-reload
-    systemctl enable $app_system_name
-    yunohost service add $app_system_name -l /var/log/$app_system_name/access.log
-}
+# Add the password to this user
+chpasswd <<< "${app}:${password}"
 
-function configure_nginx_and_ssowat()
-{
-    # Nginx conf
-    ynh_replace_string "__YNH_APP_NAME__"    "$app_system_name" ../conf/nginx.conf
-    ynh_replace_string "__YNH_APP_WEBPATH__" "$path"            ../conf/nginx.conf
-    ynh_replace_string "__YNH_APP_FSPATH__"  "$final_path"      ../conf/nginx.conf
-    cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/$app_system_name.conf
+#=================================================
+# GENERIC FINALIZATION
+#=================================================
+# SECURE FILES AND DIRECTORIES
+#=================================================
+ynh_script_progression --message="Set file permissions..."
 
-    # Reload Nginx and regenerate SSOwat conf
-    service nginx reload
-    yunohost app ssowatconf
-}
+myynh_fix_file_permissions
 
-function start_app()
-{
-    systemctl start $app_system_name
-}
+#=================================================
+# NGINX CONFIGURATION
+#=================================================
+ynh_script_progression --message="Configuring NGINX web server..."
 
-main
+ynh_add_nginx_config
+
+ynh_add_systemd_config
+
+yunohost service add $app --description="Gunicorn running a Flask app" --log="/var/log/$app/$app.log"
+
+#=================================================
+# Start the app server via systemd
+#=================================================
+ynh_script_progression --message="Starting systemd service '$app'..." --weight=5
+
+ynh_systemd_action --service_name=$app --action="start" --log_path="$log_file"
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression --message="Installation of $app completed" --last

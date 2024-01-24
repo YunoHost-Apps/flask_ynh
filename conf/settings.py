@@ -1,15 +1,8 @@
-# -*- coding: utf-8 -*-
+# Site path contains the subfolder configured during the YunoHost
+# app install. It is changed automatically during URL change.
+SITE_PATH="__PATH__"
 
-# (N.B : the site root is also related to the nginx conf!)
-SITE_ROOT = "__YNH_APP_WEBPATH__"
-
-DEBUG = False
-TEMPLATE_DEBUG = False
-
-#APP_FSPATH = "__YNH_APP_FSPATH"
-
-SQLALCHEMY_DATABASE_URI = '__YNH_DB_TYPE__://__YNH_DB_HOST__/__YNH_DB_NAME__'
-
-#DB_NAME = "__YNH_DB_NAME__"
-#DB_USER = "__YNH_DB_USER__"
-#DB_PASS = "__YNH_DB_PASSWORD__"
+# Database configuration
+DB_USER="__DB_USER__"
+DB_NAME="__DB_NAME__"
+DB_PASS="__DB_PWD__"
